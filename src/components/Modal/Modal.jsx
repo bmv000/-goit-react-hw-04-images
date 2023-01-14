@@ -17,8 +17,8 @@ export class Modal extends Component {
     if (event.target === event.currentTarget) {
       this.props.onCloseModal();
     }
-    };
-    
+  };
+
   componentDidMount() {
     window.addEventListener('keydown', this.handleCloseOnEsc);
   }

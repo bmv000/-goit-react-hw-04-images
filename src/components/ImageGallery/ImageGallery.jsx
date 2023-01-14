@@ -1,4 +1,3 @@
-
 import { Component } from 'react';
 import PropTypes from 'prop-types';
 import api from '../../api';
@@ -7,7 +6,7 @@ import { toast } from 'react-toastify';
 import { Loader } from '../Loader/Loader';
 import { ImageGalleryItem } from '../ImageGalleryItem/ImageGalleryItem';
 import { Button } from '../Button/Button';
-import css from './ImageGallery.module.css'
+import css from './ImageGallery.module.css';
 
 export class ImageGallery extends Component {
   static propTypes = {
@@ -19,7 +18,6 @@ export class ImageGallery extends Component {
     page: 1,
     isLoading: false,
     isError: false,
-   
   };
 
   async componentDidUpdate(prevProps, prevState) {
@@ -77,7 +75,6 @@ export class ImageGallery extends Component {
       }
     }
   }
-
 
   handleLoadMore = () => {
     this.setState(prevState => ({ page: prevState.page + 1 }));
