@@ -102,8 +102,4 @@ export class ImageGallery extends Component {
   }
 }
 
-ImageGalleryItem.propTypes = {
-  image: PropTypes.shape({
-    id: PropTypes.number.isRequired,
-  }).isRequired,
-};
+
