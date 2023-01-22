@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import api from '../../api';
 import { toast } from 'react-toastify';
@@ -8,54 +8,29 @@ import { ImageGalleryItem } from '../ImageGalleryItem/ImageGalleryItem';
 import { Button } from '../Button/Button';
 import css from './ImageGallery.module.css';
 
-export class ImageGallery extends Component {
-  static propTypes = {
-    queryImages: PropTypes.string.isRequired,
-  };
+export const ImageGallery = ({ queryImages }) => {
+  const [query, setQuery] = useState(queryImages);
+  const [images, setImages] = useState([]);
+  const [page, setPage] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isError, setIsError] = useState(false);
 
-  state = {
-    images: [],
-    page: 1,
-    isLoading: false,
-    isError: false,
-  };
+  useEffect(() => {
+    setImages([]);
+    setPage(1);
+    setQuery(queryImages);
+  }, [queryImages]);
 
-  async componentDidUpdate(prevProps, prevState) {
-    const prevQueryImages = prevProps.queryImages;
-    const nextQueryImages = this.props.queryImages;
-
-    const prevQueryPage = prevState.page;
-    const nextQueryPage = this.state.page;
-
-    if (prevQueryImages !== nextQueryImages) {
-      this.setState({ isLoading: true, images: [], page: 1 });
-
-      try {
-        if (this.state.page === 1) {
-          let images = await api.fetchImages(nextQueryImages, nextQueryPage);
-          images = images.map(image => {
-            return (image = {
-              id: image.id,
-              largeImageURL: image.largeImageURL,
-              webformatURL: image.webformatURL,
-              tags: image.tags,
-            });
-          });
-          this.setState({ images });
-        }
-      } catch (error) {
-        console.log(error);
-        this.setState({ isError: true });
-      } finally {
-        this.setState({ isLoading: false });
-      }
+  useEffect(() => {
+    if (!query) {
+      return;
     }
 
-    if (prevQueryPage !== nextQueryPage) {
-      this.setState({ isLoading: true });
-
+    const getImages = async () => {
       try {
-        let images = await api.fetchImages(nextQueryImages, nextQueryPage);
+        setIsLoading(true);
+
+        let images = await api.fetchImages(query, page);
         images = images.map(image => {
           return (image = {
             id: image.id,
@@ -64,42 +39,40 @@ export class ImageGallery extends Component {
             tags: image.tags,
           });
         });
-        this.setState(prevState => ({
-          images: [...prevState.images, ...images],
-        }));
+        setImages(prevState => [...prevState, ...images]);
       } catch (error) {
         console.log(error);
-        this.setState({ isError: true });
+        setIsError(true);
       } finally {
-        this.setState({ isLoading: false });
+        setIsLoading(false);
       }
-    }
-  }
+    };
 
-  handleLoadMore = () => {
-    this.setState(prevState => ({ page: prevState.page + 1 }));
+    getImages();
+  }, [query, page]);
+
+  const handleLoadMore = () => {
+    setPage(prevState => prevState + 1);
   };
 
-  render() {
-    const { images, isLoading, isError } = this.state;
+  return (
+    <>
+      {images?.length !== 0 && (
+        <div className={css.gallery}>
+          {images?.map(image => (
+            <ImageGalleryItem key={image.id} image={image} />
+          ))}
+        </div>
+      )}
+      {isLoading && <Loader />}
+      {!isLoading && images?.length !== 0 && (
+        <Button onClickLoadMore={handleLoadMore} />
+      )}
+      {isError && toast.error('We have error.')}
+    </>
+  );
+};
 
-    return (
-      <>
-        {images?.length !== 0 && (
-          <div className={css.gallery}>
-            {images?.map(image => (
-              <ImageGalleryItem key={image.id} image={image} />
-            ))}
-          </div>
-        )}
-        {isLoading && <Loader />}
-        {!isLoading && images?.length !== 0 && (
-          <Button onClickLoadMore={this.handleLoadMore} />
-        )}
-        {isError && toast.error('We have error.')}
-      </>
-    );
-  }
-}
-
-
+ImageGallery.propTypes = {
+  queryImages: PropTypes.string.isRequired,
+};
