@@ -34,7 +34,6 @@ export const Searchbar = ({ onSubmitForApp }) => {
           <FaSearch size={32} />
           <label className={css.search__label}>Search</label>
         </button>
-
         <input
           className={css.search__input}
           type="text"
@@ -49,7 +48,6 @@ export const Searchbar = ({ onSubmitForApp }) => {
     </div>
   );
 };
-
 
 Searchbar.propTypes = {
   onSubmitForApp: PropTypes.func.isRequired,
