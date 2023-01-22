@@ -1,4 +1,4 @@
-import { Component } from 'react';
+
 import css from './App.module.css';
 import 'react-toastify/dist/ReactToastify.css';
 import { Searchbar } from './Searchbar/Searchbar';
