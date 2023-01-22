@@ -50,6 +50,7 @@ export const Searchbar = ({ onSubmitForApp }) => {
   );
 };
 
+
 Searchbar.propTypes = {
   onSubmitForApp: PropTypes.func.isRequired,
 };
